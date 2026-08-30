@@ -1,26 +1,143 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Surfaces */
+  --color-paper: #faf7f1;
+  --color-card: #fffdf8;
+
+  /* Ink */
+  --color-ink: #1a1815;
+  --color-ink-soft: #4a443b;
+  --color-ink-mute: #6b6156;
+  --color-ink-faint: #615a4f;
+  --color-ink-strong: #26221c;
+
+  /* Lines */
+  --color-line: #e0d7c6;
+  --color-line-soft: #d8cebc;
+  --color-line-tag: #d3c8b4;
+  --color-line-hair: #e9e0d1;
+  --color-line-divider: #e3dacb;
+  --color-placeholder: #c2b7a4;
+
+  /* Blueprint grid */
+  --color-grid-fine: #eae1d2;
+  --color-grid-coarse: #ded4c2;
+  --color-grid-fine-mobile: #e9e0d1;
+
+  /* Accent (ochre) */
+  --color-accent: #b1832f;
+  --color-accent-deep: color-mix(in oklab, var(--color-accent) 74%, var(--color-ink));
+
+  /* Secondary accent (rust) - hardware/status highlights */
+  --color-rust: oklch(0.55 0.13 40);
+  --color-rust-deep: oklch(0.45 0.12 40);
+
+  /* Photo treatment */
+  --color-photo-tint: oklch(0.68 0.09 68);
+
+  /* Fonts */
+  --font-display: var(--font-familjen-grotesk), "Familjen Grotesk", sans-serif;
+  --font-serif: var(--font-newsreader), "Newsreader", Georgia, serif;
+  --font-mono: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+}
+
+@layer base {
+  a {
+    color: var(--color-accent-deep);
+  }
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-card);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-deep);
+  outline-offset: 2px;
+}
+
+/* Blueprint grid background, two layers: fine 40px + coarse 200px */
+.blueprint-grid {
+  background-image:
+    repeating-linear-gradient(to right, var(--color-grid-fine) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(to bottom, var(--color-grid-fine) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(to right, var(--color-grid-coarse) 0 1px, transparent 1px 200px),
+    repeating-linear-gradient(to bottom, var(--color-grid-coarse) 0 1px, transparent 1px 200px);
+}
+
+.blueprint-grid-mobile {
+  background-image:
+    repeating-linear-gradient(to right, var(--color-grid-fine-mobile) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(to bottom, var(--color-grid-fine-mobile) 0 1px, transparent 1px 32px);
+}
+
+/* Corner crop-marks used on plate photo frames */
+.plate-marks {
+  --mk: linear-gradient(var(--color-line-soft), var(--color-line-soft)) 5px 0/1px 12px no-repeat,
+    linear-gradient(var(--color-line-soft), var(--color-line-soft)) 0 5px/12px 1px no-repeat,
+    linear-gradient(var(--color-line-soft), var(--color-line-soft)) right 5px top 0/1px 12px no-repeat,
+    linear-gradient(var(--color-line-soft), var(--color-line-soft)) right 0 top 5px/12px 1px no-repeat,
+    linear-gradient(var(--color-line-soft), var(--color-line-soft)) left 5px bottom 0/1px 12px no-repeat,
+    linear-gradient(var(--color-line-soft), var(--color-line-soft)) left 0 bottom 5px/12px 1px no-repeat,
+    linear-gradient(var(--color-line-soft), var(--color-line-soft)) right 5px bottom 0/1px 12px no-repeat,
+    linear-gradient(var(--color-line-soft), var(--color-line-soft)) right 0 bottom 5px/12px 1px no-repeat;
+}
+.plate-marks::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  background: var(--mk);
+  pointer-events: none;
+}
+
+/* Photo tint overlay used on top of project imagery */
+.photo-tint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-photo-tint);
+  mix-blend-mode: soft-light;
+  opacity: 0.4;
+}
+
+/* Scroll-reveal: plates settle 6px into place */
+.reveal {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
